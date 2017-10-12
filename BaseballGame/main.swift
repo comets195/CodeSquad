@@ -13,15 +13,17 @@ var computerNumber: [Int] = [0, 0, 0]
 var ball = 0
 var strike = 0
 
-for var i in 0..<3{
-    let randomNo1: Int = Int(arc4random_uniform(9) + 1)
-    tempArray[i] = randomNo1
+var i = 0
+while i < 3 {
+    let randomNo: Int = Int(arc4random_uniform(9) + 1)
+    tempArray[i] = randomNo
+    
     for j in 0..<i{
         if tempArray[i] == tempArray[j]{
             i -= 1
-            break
         }
     }
+    i += 1
 }
 
 func printFunc(){
