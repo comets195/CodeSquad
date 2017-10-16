@@ -1,36 +1,10 @@
-큰제목
+#CodeSquad iOS과정 정리 GitHub입니다.
 =====
-작은제목
------
-
-#글머리들
-# CodeSquad
-## CodeSquad2
-### CodeSquad3
-#### CodeSquad4
-##### CodeSquad5
-###### CodeSquad6
-
-> 블럭인용문자입니다.
->>블럭인용문자2번째입니다.
->>>블럭인용문자3번째입니다.
-
-1.첫번째
-2.두번째
-3.세번째
-<hr/>
-* 글머리
-   * 글머리2
-     * 글머리
-     잘되네요
-
+##교육기간동안 다음사항은 꼭 지키겠습니다.
 <pre>
 <code>
-//swift test code~
-let str = "Hello world"
-let str2 = "Hello World2"
+1. 그날그날 알게된걸 정리하기. (girhub 블로그를 활용해보려함 현재 아직 제작안했음 10/16)
+2. 하루도 빠지지않고 그날한거 복습 철저하게하기.
 
-print(str)
-print(str2)
 </pre>
 </code>
