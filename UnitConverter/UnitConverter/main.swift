@@ -5,7 +5,6 @@
 //  Created by Mrlee on 2017. 10. 16..
 //  Copyright © 2017년 Mrlee. All rights reserved.
 //
-
 import Foundation
 
 //길이 단위 변환 함수
@@ -29,5 +28,6 @@ func convertFunc(str InputString: String){
     }
 }
 
-convertFunc(str: "180cm")
-convertFunc(str: "1.86m")
+print("변환하고 싶은 수치를 입력하세요 : ", terminator: "")
+var inputStr = readLine()
+convertFunc(str: inputStr!)
