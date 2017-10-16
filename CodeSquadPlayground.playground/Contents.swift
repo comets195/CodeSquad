@@ -7,3 +7,6 @@ print(str)
 
 let str2 = "Somting Edit!!!"
 print(str2)
+
+let str3 = "Somting Edit!!!!"
+print(str3)
