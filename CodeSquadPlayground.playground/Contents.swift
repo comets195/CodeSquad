@@ -4,3 +4,6 @@ import UIKit
 
 var str = "Hello, playground"
 print(str)
+
+let str2 = "Somting Edit!!!"
+print(str2)
