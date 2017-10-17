@@ -9,6 +9,9 @@
 
 import Foundation
 let baseNum: Double = 100
+let baseNumForGram: Double = 1000
+let ozToGram: Double = 28.34
+let lbToGram: Double = 453.59
 let centiToInch: Double = 2.54
 let centiToYard: Double = 91.44
 
@@ -23,7 +26,7 @@ func yardToCenti(yardInput input: Double) -> Double{
     return input * centiToYard
 }
 
-func CentiToYard(centiInput input:Int) -> Double{
+func centiToYard(centiInput input:Int) -> Double{
     return Double(input) / centiToYard
 }
 
@@ -43,6 +46,31 @@ func centiToMeter(centiInput input: Int) -> Double{
     return Double(input) / baseNum
 }
 
+func kiloToGram(kiloInput input: Double) -> Int{
+    return Int(input * baseNumForGram)
+}
+
+func gramToKilo(gramInput input: Int) -> Double{
+    return Double(input) / baseNumForGram
+}
+
+func ozToGram(ozInput input: Double) -> Double{
+    return input * ozToGram
+}
+
+func gramToOz(gramInput input: Double) -> Double{
+    return input / ozToGram
+}
+
+func lbToGram(lbInput input: Double) -> Double{
+    return input * lbToGram
+}
+
+func gramToLb(gramInput input: Double) -> Double{
+    return input / lbToGram
+}
+
+//////////////////////////////////////////////////////////////////
 func sperateInputOneUnit(str input: String) -> (Double, String){
     var inputVar = input
     let range = inputVar.index(inputVar.endIndex, offsetBy: -1)..<inputVar.endIndex
@@ -66,10 +94,7 @@ func sperateInputFourUnit(str input: String) -> (Double, String){
     inputVar.removeSubrange(range)
     return (Double(inputVar)!, unit)
 }
-
-//func sperateFunc(str input:String) -> ({
-//
-//}
+//////////////////////////////////////////////////////////////////
 
 func converFunc(str inputString: String) -> Bool{
     let strArr = inputString.components(separatedBy: " ")
@@ -78,10 +103,10 @@ func converFunc(str inputString: String) -> Bool{
     var num: Double = 0
     var result: Double = 0
     if  strArr.count > 1{
-        if strArr[0].contains("cm") {
+        if strArr[0].contains("cm") || strArr[0].contains("kg") || strArr[0].contains("oz") || strArr[0].contains("lb"){
             (num, fromUnit) = sperateInputTwoUnit(str: strArr[0])
             toUnit = strArr[1]
-        }else if strArr[0].contains("m"){
+        }else if strArr[0].contains("m") || strArr[0].contains("g"){
             (num, fromUnit) = sperateInputOneUnit(str: strArr[0])
             toUnit = strArr[1]
         }else if strArr[0].contains("inch") || strArr[0].contains("yard"){
@@ -117,9 +142,49 @@ func converFunc(str inputString: String) -> Bool{
             print(" m")
             break
         case ("m", "yard"):
-            result = CentiToYard(centiInput: meterToCenti(meterInput: num))
+            result = centiToYard(centiInput: meterToCenti(meterInput: num))
             printResult(result)
             print(" yard")
+        case ("g", "oz"):
+            result = gramToOz(gramInput: num)
+            printResult(result)
+            print(" oz")
+            break
+        case ("kg", "oz"):
+            result = gramToOz(gramInput: Double(kiloToGram(kiloInput: num)))
+            printResult(result)
+            print(" oz")
+            break
+        case ("oz", "g"):
+            result = ozToGram(ozInput: num)
+            printResult(result)
+            print(" g")
+            break
+        case ("oz", "kg"):
+            result = gramToKilo(gramInput: Int(ozToGram(ozInput: num)))
+            printResult(result)
+            print(" kg")
+            break
+        case ("g", "lb"):
+            result = gramToLb(gramInput: num)
+            printResult(result)
+            print(" lb")
+            break
+        case ("kg", "lb"):
+            result = gramToLb(gramInput: Double(kiloToGram(kiloInput: num)))
+            printResult(result)
+            print(" lb")
+            break
+        case ("lb", "g"):
+            result = lbToGram(lbInput: num)
+            printResult(result)
+            print(" g")
+            break
+        case ("lb", "kg"):
+            result = gramToKilo(gramInput: Int(lbToGram(lbInput: num)))
+            printResult(result)
+            print(" kg")
+            break
         default:
             print("지원하지 않는 단위입니다. 다시입력해주세요.")
             break
@@ -141,6 +206,16 @@ func converFunc(str inputString: String) -> Bool{
             result = centiToMeter(centiInput: Int(yardToCenti(yardInput: num)))
             printResult(result)
             print(" m")
+        }else if inputString.contains("kg"){
+            (num, fromUnit) = sperateInputTwoUnit(str: inputString)
+            result = Double(kiloToGram(kiloInput: num))
+            printResult(result)
+            print(" g")
+        }else if inputString.contains("g"){
+            (num, fromUnit) = sperateInputOneUnit(str: inputString)
+            result = gramToKilo(gramInput: Int(num))
+            printResult(result)
+            print(" kg")
         }
         return true
     }
