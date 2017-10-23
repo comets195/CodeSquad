@@ -12,7 +12,7 @@ typealias UnitsDic = [String: Double]
 //for를 세번써야하는가 아닌가의 문제로다.
 let lengthUnitDic: UnitsDic = ["cm": 1, "m": 100.0, "inch": 2.54, "yard": 91.44]
 let weightUnitDic: UnitsDic = ["g": 1, "kg": 1000.0, "oz": 28.34, "lb": 435.59]
-let volumeUnitDic: UnitsDic = ["L": 1, "gal": 0.264, "pt": 1.76, "qt": 1.057]
+let volumeUnitDic: UnitsDic = ["L": 1, "gal": 3.785, "pt": 0.473, "qt": 0.946]
 
 //let baseUnitDic: [String: Double] = ["cm": 1, "g": 1]
 //
@@ -168,3 +168,5 @@ while(executeVal){
     //사용자가 q or quit를 입력하면 함수 종료
     
 }
+
+
