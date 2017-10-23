@@ -203,7 +203,7 @@ var executeVal: Bool = true
 while(executeVal){
     print("변환 하고 싶으신 단위를 입력하세요 : ", terminator: "")
     let inputStr = readLine()
+    //사용자가 q or quit를 입력하면 함수 종료
     if inputStr == "q" || inputStr == "quit"{ break }
     executeVal = printResult(inputVal: convertExecute(inputStr))
-    //사용자가 q or quit를 입력하면 함수 종료
 }
