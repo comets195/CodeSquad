@@ -6,50 +6,76 @@
 //  Copyright © 2017년 Napster. All rights reserved.
 //
 import Foundation
-typealias numberUnitResult = (Double, String)
+typealias NumberUnitResult = (Double, String)
+typealias UnitsDic = [String: Double]
 //각 단위별 모음 딕셔너리 (길이는 1cm 기준, 무게는 g이 기준)
-let lengthUnitDic: [String: Double] = ["cm": 1, "m": 100.0, "inch": 2.54, "yard": 91.44]
-let weightUnitDic: [String: Double] = ["g": 1, "kg": 1000.0, "oz": 28.34, "lb": 435.59]
+//for를 세번써야하는가 아닌가의 문제로다.
+let lengthUnitDic: UnitsDic = ["cm": 1, "m": 100.0, "inch": 2.54, "yard": 91.44]
+let weightUnitDic: UnitsDic = ["g": 1, "kg": 1000.0, "oz": 28.34, "lb": 435.59]
+let volumeUnitDic: UnitsDic = ["L": 1, "gal": 0.264, "pt": 1.76, "qt": 1.057]
+
+//let baseUnitDic: [String: Double] = ["cm": 1, "g": 1]
+//
+//enum UnitBase: String{
+//    case length
+//    case weight
+//}
 
 enum Units: String {
     case cm
-    case L
     case g
+    case L
 }
 
-struct LengthUnit{
+struct UnitConvert{
     var fromUnit: String
     var toUnit: String?
     var numVal: Double
     
-    //입력받은 LengthUnit구조체를 처리한다., 단 입력값이 2개여야함(입력단위, 변환하고자 하는 단위)
-    func convertInputVal(_ convertUnit: LengthUnit) -> Double{
-        let baseUnit: Units = Units.cm
+    //fromUnit(분류된 key, 즉 Unit이 들어온걸 분류해야함
+    func selectBaseUnit(_ fromUnit: String) -> (Units, UnitsDic) {
+        for key in lengthUnitDic.keys {
+            if key == fromUnit{ return (Units.cm, lengthUnitDic) }
+        }
+        for key in weightUnitDic.keys {
+            if key == fromUnit { return (Units.g, weightUnitDic) }
+        }
+        for key in volumeUnitDic.keys {
+            if key == fromUnit { return (Units.L, volumeUnitDic) }
+        }
+        return (Units.cm, lengthUnitDic)
+    }
+    
+    
+    //입력받은 UnitConvert구조체를 처리한다., 단 입력값이 2개여야함(입력단위, 변환하고자 하는 단위)
+    func convertInputVal(_ convertUnit: UnitConvert) -> Double{
+        let baseUnitWithDic: (Units, UnitsDic) = selectBaseUnit(convertUnit.fromUnit)
+        let baseUnitTest: Units = baseUnitWithDic.0
+        let baseUnitDic: UnitsDic = baseUnitWithDic.1
+        
         var convertCentiVal: Double = 0.0
         //목표 단위가 cm가 아니라면 cm로 변환해주는 조건문
-        if toUnit != baseUnit.rawValue {
-            convertCentiVal = convertUnit.numVal * lengthUnitDic[convertUnit.fromUnit]!
-            return convertCentiVal / lengthUnitDic[convertUnit.toUnit!]!
+        if toUnit != baseUnitTest.rawValue {
+            convertCentiVal = convertUnit.numVal * baseUnitDic[convertUnit.fromUnit]!
+            return convertCentiVal / baseUnitDic[convertUnit.toUnit!]!
         } else {
             //목표단위가 cm이라면 직접 값을 넣어 계산한다.
-            return convertUnit.numVal * lengthUnitDic[convertUnit.fromUnit]!
+            return convertUnit.numVal * baseUnitDic[convertUnit.fromUnit]!
         }
-        
     }
     
     //입력받은 LengthUnit구조체를 처리한다. 단 입력값은 하나일때(입력단위가 cm이면 m로, m면 cm으로)
-    func convertInputOneVal(_ convertUnit: LengthUnit) -> Double{
+    func convertInputOneVal(_ convertUnit: UnitConvert) -> NumberUnitResult{
         var convertVal: Double
         let convertToUnit: String = "m"
-        //        let convertToCentiUnit: String = "cm"
         //입력단위가 cm 이라면 m로 바꿔주는 조건문
         if convertUnit.fromUnit == "cm" {
             convertVal = convertUnit.numVal / lengthUnitDic[convertToUnit]!
-            return convertVal
+            return (convertVal, convertToUnit)
         }else{
             //입력단위가 m라면 cm으로 바꿔줌!
             convertVal = convertUnit.numVal * lengthUnitDic[convertToUnit]!
-            return convertVal
+            return (convertVal, convertUnit.fromUnit)
         }
     }
 }
@@ -58,6 +84,14 @@ struct LengthUnit{
 func searchUnitPart(currValWithUnit: String) -> String?{
     //길이단위 딕셔너리에 값이 있는지 확인
     for key in lengthUnitDic.keys {
+        if currValWithUnit.hasSuffix(key){ return key }
+    }
+    //무게단위 딕셔너리에 값이 있는지 확인
+    for key in weightUnitDic.keys {
+        if currValWithUnit.hasSuffix(key){ return key }
+    }
+    //부피단위 딕셔너리에 값이 있는지 확인
+    for key in volumeUnitDic.keys {
         if currValWithUnit.hasSuffix(key){ return key }
     }
     //값이 없으면 nil반환
@@ -82,11 +116,7 @@ func separateInputString(_ inputVal: String) -> Array<String>{
     return strArr
 }
 
-func sortUnits(_ inputStr: String?){
-    
-}
-
-func convertExecute(_ inputStr: String?) -> (numberUnitResult, Bool){
+func convertExecute(_ inputStr: String?) -> (NumberUnitResult, Bool){
     guard let inputStr = inputStr else {
         print("input Error!")
         return ((0.0, ""), false)
@@ -99,20 +129,23 @@ func convertExecute(_ inputStr: String?) -> (numberUnitResult, Bool){
         let separatedDigit = searchDigitPart(valWithFromUnit: separatedInputStr[0], currUnit: fromUnitPart) //입력값에서 숫자 분리
         //입력받은값이 2개이상일경우
         if separatedInputStr.count > 1 {
-            let convertUnitDigit: LengthUnit = LengthUnit(fromUnit: fromUnitPart!, toUnit: separatedInputStr[1], numVal: separatedDigit!)
+            let convertUnitDigit: UnitConvert = UnitConvert(fromUnit: fromUnitPart!, toUnit: separatedInputStr[1], numVal: separatedDigit!)
             return ((convertUnitDigit.convertInputVal(convertUnitDigit), separatedInputStr[1]), true)
         }else{
-            let convertUnitDigit: LengthUnit = LengthUnit(fromUnit: fromUnitPart!, toUnit: nil, numVal: separatedDigit!)
-            return ((convertUnitDigit.convertInputOneVal(convertUnitDigit), fromUnitPart!), true)
+            //입력받은값이 1개일경우
+            let convertUnitDigit: UnitConvert = UnitConvert(fromUnit: fromUnitPart!, toUnit: nil, numVal: separatedDigit!)
+            let convertResult = convertUnitDigit.convertInputOneVal(convertUnitDigit)
+            //튜플값에 이름을 줄순 없을까?
+            return ((convertResult.0, convertResult.1), true)
         }
     }else{
         return ((0.0, ""), false)
     }
 }
 
-func printResult(inputVal: (numberUnitResult, Bool)) -> Bool{
+func printResult(inputVal: (NumberUnitResult, Bool)) -> Bool{
     if inputVal.1 {
-        print("\(inputVal.0) \(inputVal.0.1)")
+        print("\(inputVal.0.0) \(inputVal.0.1)")
     }
     return true
 }
@@ -135,4 +168,3 @@ while(executeVal){
     //사용자가 q or quit를 입력하면 함수 종료
     
 }
-
