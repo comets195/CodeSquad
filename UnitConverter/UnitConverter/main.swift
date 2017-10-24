@@ -35,9 +35,9 @@ struct UnitConvert{
     var numVal: Double
     
     //fromUnit(분류된 key, 즉 Unit이 들어온걸 분류해야함
-    func selectBaseUnit(_ fromUnit: String) -> (Units, UnitsDic) {
+    func selectBaseUnit(_ fromUnit: String) -> (unitBase: Units, unitDic: UnitsDic) {
         let key = searchUnitPart(currValWithUnit: fromUnit)
-        switch key.1 {
+        switch key.unitDic {
         case "lengthUnitDic":
             return (Units.cm, UnitStruct.lengthUnitDic)
         case "weightUnitDic":
@@ -51,9 +51,9 @@ struct UnitConvert{
     //입력받은 UnitConvert구조체를 처리한다., 단 입력값이 2개여야함(입력단위, 변환하고자 하는 단위)
     func convertInputVal(_ convertUnit: UnitConvert) -> String{
         var convertBaseVal: Double = 0.0
-        let baseUnitWithDic: (Units, UnitsDic) = selectBaseUnit(convertUnit.fromUnit)
-        let baseUnit: Units = baseUnitWithDic.0 // Units
-        let baseUnitDic: UnitsDic = baseUnitWithDic.1 // UnitsDic
+        let baseUnitWithDic = selectBaseUnit(convertUnit.fromUnit)
+        let baseUnit: Units = baseUnitWithDic.unitBase // Units
+        let baseUnitDic: UnitsDic = baseUnitWithDic.unitDic // UnitsDic
         var result: String = ""
         
         //목표 단위가 cm가 아니라면 cm로 변환해주는 조건문
@@ -77,9 +77,9 @@ struct UnitConvert{
         var convertVal: Double = convertUnit.numVal
         var convertBaseVal: Double = 0.0
         var result: String = ""
-        let baseUnitWithDic: (Units, UnitsDic) = selectBaseUnit(convertUnit.fromUnit)
-        let baseUnit: Units = baseUnitWithDic.0 // Units
-        let baseUnitDic: UnitsDic = baseUnitWithDic.1
+        let baseUnitWithDic = selectBaseUnit(convertUnit.fromUnit)
+        let baseUnit: Units = baseUnitWithDic.unitBase // Units
+        let baseUnitDic: UnitsDic = baseUnitWithDic.unitDic
         
         for key in baseUnitDic.keys {
             if key != baseUnit.rawValue{
@@ -96,7 +96,7 @@ struct UnitConvert{
 }
 
 //입력받은 단위를 찾아내는 함수
-func searchUnitPart(currValWithUnit: String) -> (String?, String){
+func searchUnitPart(currValWithUnit: String) -> (key: String?, unitDic: String){
     //길이단위 딕셔너리에 값이 있는지 확인
     for key in UnitStruct.lengthUnitDic.keys {
         if currValWithUnit.hasSuffix(key){ return (key, "lengthUnitDic") }
@@ -136,7 +136,7 @@ func separateInputStringToUnit(_ inputVal: String) -> Array<String>{
     return strArr
 }
 
-func convertExecute(_ inputStr: String?) -> (String, Int, Bool){
+func convertExecute(_ inputStr: String?) -> (resultStr: String, arrayCount: Int, checkVal: Bool){
     guard let inputStr = inputStr else {
         print("input Error!")
         return ("", 0 ,false)
@@ -144,20 +144,20 @@ func convertExecute(_ inputStr: String?) -> (String, Int, Bool){
     let separatedInputStr = separateInputString(inputStr) //배열로 저장됨 180cm m,inch
     let fromUnitPart = searchUnitPart(currValWithUnit: separatedInputStr[0]) //입력받은 단위 찾기
     //입력받는 단위 변환 가능한지 체크
-    let checkVal: Bool = checkUnit(inputStr: fromUnitPart.0)
+    let checkVal: Bool = checkUnit(inputStr: fromUnitPart.key)
     if checkVal{
-        let separatedDigit = searchDigitPart(valWithFromUnit: separatedInputStr[0], currUnit: fromUnitPart.0) //입력값에서 숫자 분리
+        let separatedDigit = searchDigitPart(valWithFromUnit: separatedInputStr[0], currUnit: fromUnitPart.key) //입력값에서 숫자 분리
         //입력받은값이 2개이상일경우
         if separatedInputStr.count > 1 {
             let separateToUnit = separateInputStringToUnit(separatedInputStr[1])
-            let convertUnitDigit: UnitConvert = UnitConvert(fromUnit: fromUnitPart.0!,
+            let convertUnitDigit: UnitConvert = UnitConvert(fromUnit: fromUnitPart.key!,
                                                             toUnit: separateToUnit,
                                                             numVal: separatedDigit!)
             let converResult = convertUnitDigit.convertInputVal(convertUnitDigit)
             return (converResult, separateToUnit.count, true)
         }else{
             //입력받은값이 1개일경우
-            let convertUnitDigit: UnitConvert = UnitConvert(fromUnit: fromUnitPart.0!,
+            let convertUnitDigit: UnitConvert = UnitConvert(fromUnit: fromUnitPart.key!,
                                                             toUnit: [nil],
                                                             numVal: separatedDigit!)
             let convertResult = convertUnitDigit.convertInputOneVal(convertUnitDigit)
@@ -169,8 +169,8 @@ func convertExecute(_ inputStr: String?) -> (String, Int, Bool){
     }
 }
 
-func printResult(inputVal: (String, Int ,Bool)) -> Bool{
-    print("\(inputVal.0)")
+func printResult(inputVal: (resultStr: String, arrayCount: Int , checkVal: Bool)) -> Bool{
+    print("\(inputVal.resultStr)")
     return true
 }
 
