@@ -1,4 +1,4 @@
-#CodeSquad iOS과정 정리 GitHub입니다.
+# CodeSquad iOS과정 정리 GitHub입니다.
 
 교육기간동안 다음사항은 꼭 지키겠습니다.
 
